@@ -3,7 +3,7 @@ use std::{thread, time};
 use tokio::sync::mpsc;
 
 struct Message<T> {
-    thread_id: u64,
+    task_id: u64,
     message: T
 }
 
@@ -18,15 +18,15 @@ async fn main() {
             let x = rand::thread_rng().gen_range(1, 100);
             let amount = time::Duration::from_millis(x);
             thread::sleep(amount);
-            tx.send(Message  {thread_id: 1, message: x}).await;
+            tx.send(Message  {task_id: 1, message: x}).await;
         }
     });
 
     tokio::spawn(async move {
-        tx2.send(Message  {thread_id: 2, message: 111}).await;
+        tx2.send(Message  {task_id: 2, message: 111}).await;
     });
 
     while let Some(message) = rx.recv().await {
-        println!("GOT = {} from Task {}", message.message, message.thread_id);
+        println!("GOT = {} from Task {}", message.message, message.task_id);
     }
 }
