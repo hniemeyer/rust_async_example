@@ -21,7 +21,7 @@ async fn main() {
     for thread_num in 1..100 {
         let mut tx2 = tx.clone();
         tokio::spawn(async move {
-            let amount = generate_random_amount_milliseconds(1, thread_num * 10);
+            let amount = generate_random_amount_milliseconds(1, std::cmp::min(thread_num * 10, 1000));
             thread::sleep(amount);
             tx2.send(Message {
                 task_id: thread_num,
