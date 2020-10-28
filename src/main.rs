@@ -14,12 +14,12 @@ fn generate_random_amount_milliseconds(low: u64, high: u64) -> time::Duration {
 
 #[tokio::main]
 async fn main() {
-    let (mut tx, mut rx) = mpsc::channel(1);
+    let (mut tx, mut rx) = mpsc::channel(32);
 
     for thread_num in 1..100 {
         let mut tx2 = tx.clone();
         tokio::spawn(async move {
-            let amount = generate_random_amount_milliseconds(1, thread_num * 10);
+            let amount = generate_random_amount_milliseconds(1, 10);
             thread::sleep(amount);
             tx2.send(Message {
                 task_id: thread_num,
@@ -29,6 +29,14 @@ async fn main() {
         });
     }
 
+    tokio::spawn(async move {
+        tx.send(Message {
+            task_id: 0,
+            message: time::Duration::from_millis(1),
+        })
+        .await
+    });
+
     while let Some(message) = rx.recv().await {
         println!(
             "GOT = {} from Task {}",
@@ -36,4 +44,5 @@ async fn main() {
             message.task_id
         );
     }
+    println!("Finished");
 }
