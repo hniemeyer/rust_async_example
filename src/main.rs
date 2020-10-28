@@ -39,12 +39,15 @@ async fn main() {
         .await
     });
 
+    let mut sum_amount = 0;
     while let Some(message) = rx.recv().await {
         println!(
             "GOT = {} from Task {}",
             message.message.as_millis(),
             message.task_id
         );
+        sum_amount += message.message.as_millis();
     }
     println!("Finished");
+    println!("Sum of all sleeps in milliseconds: {}", sum_amount);
 }
