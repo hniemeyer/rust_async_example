@@ -2,6 +2,11 @@ use rand::Rng;
 use std::{thread, time};
 use tokio::sync::mpsc;
 
+struct Message<T> {
+    thread_id: u64,
+    message: T
+}
+
 #[tokio::main]
 async fn main() {
     let (mut tx, mut rx) = mpsc::channel(1);
@@ -13,15 +18,15 @@ async fn main() {
             let x = rand::thread_rng().gen_range(1, 100);
             let amount = time::Duration::from_millis(x);
             thread::sleep(amount);
-            tx.send(x).await;
+            tx.send(Message  {thread_id: 1, message: x}).await;
         }
     });
 
     tokio::spawn(async move {
-        tx2.send(111).await;
+        tx2.send(Message  {thread_id: 2, message: 111}).await;
     });
 
     while let Some(message) = rx.recv().await {
-        println!("GOT = {}", message);
+        println!("GOT = {} from Task {}", message.message, message.thread_id);
     }
 }
