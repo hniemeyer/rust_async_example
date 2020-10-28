@@ -15,13 +15,16 @@ fn generate_random_amount_milliseconds(low: u64, high: u64) -> time::Duration {
 #[tokio::main]
 async fn main() {
     let now = time::Instant::now();
+    const num_tasks: u64 = 100;
+    const max_waiting_time_ms: u64 = 500;
+    const buffer_size: usize = 50;
     
-    let (mut tx, mut rx) = mpsc::channel(32);
+    let (mut tx, mut rx) = mpsc::channel(buffer_size);
 
-    for thread_num in 1..100 {
+    for thread_num in 1..num_tasks {
         let mut tx2 = tx.clone();
         tokio::spawn(async move {
-            let amount = generate_random_amount_milliseconds(1, std::cmp::min(thread_num * 10, 1000));
+            let amount = generate_random_amount_milliseconds(1, std::cmp::min(thread_num * 10, max_waiting_time_ms));
             thread::sleep(amount);
             tx2.send(Message {
                 task_id: thread_num,
