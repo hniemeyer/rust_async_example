@@ -14,6 +14,8 @@ fn generate_random_amount_milliseconds(low: u64, high: u64) -> time::Duration {
 
 #[tokio::main]
 async fn main() {
+    let now = time::Instant::now();
+    
     let (mut tx, mut rx) = mpsc::channel(32);
 
     for thread_num in 1..100 {
@@ -50,4 +52,5 @@ async fn main() {
     }
     println!("Finished");
     println!("Sum of all sleeps in milliseconds: {}", sum_amount);
+    println!("Real elapsed time in milliseconds: {}", now.elapsed().as_millis());
 }
