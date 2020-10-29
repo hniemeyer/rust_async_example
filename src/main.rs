@@ -13,6 +13,7 @@ fn generate_random_amount_milliseconds(low: u64, high: u64) -> time::Duration {
 }
 
 #[tokio::main]
+#[allow(unused_must_use)]
 async fn main() {
     let now = time::Instant::now();
     const NUM_TASKS: u64 = 100;
