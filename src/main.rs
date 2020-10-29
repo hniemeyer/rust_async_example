@@ -19,10 +19,10 @@ async fn main() {
     const MAX_WAITING_TIME_MS: u64 = 500;
     const BUFFER_SIZE: usize = 50;
 
-    let (mut tx, mut rx) = mpsc::channel(BUFFER_SIZE);
+    let (tx, mut rx) = mpsc::channel(BUFFER_SIZE);
 
     for thread_num in 1..NUM_TASKS {
-        let mut tx2 = tx.clone();
+        let tx2 = tx.clone();
         tokio::spawn(async move {
             let amount = generate_random_amount_milliseconds(
                 1,
