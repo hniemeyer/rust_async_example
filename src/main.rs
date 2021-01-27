@@ -8,7 +8,7 @@ struct Message<T> {
 }
 
 fn generate_random_amount_milliseconds(low: u64, high: u64) -> time::Duration {
-    let x = rand::thread_rng().gen_range(low, high);
+    let x = rand::thread_rng().gen_range(low..high);
     time::Duration::from_millis(x)
 }
 
